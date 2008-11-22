@@ -230,7 +230,7 @@ int Depot::iterate_files(Archive* archive, FileIteratorFunc func, void* context)
 				if (blobsize > 0) {
 					digest = new Digest();
 					digest->m_size = blobsize;
-					memcpy(digest->m_data, blob, (blobsize < sizeof(digest->m_data)) ? blobsize : sizeof(digest->m_data));
+					memcpy(digest->m_data, blob, ((size_t)blobsize < sizeof(digest->m_data)) ? blobsize : sizeof(digest->m_data));
 				}
 
 				File* file = FileFactory(serial, archive, info, (const char*)path, mode, uid, gid, size, digest);
@@ -676,7 +676,7 @@ int Depot::uninstall(Archive* archive) {
 	if (res == 0) res = this->iterate_files(archive, &Depot::uninstall_file, &context);
 	
 	if (res == 0) res = this->begin_transaction();
-	int i;
+	uint32_t i;
 	for (i = 0; i < context.files_to_remove->count; ++i) {
 		uint64_t serial = context.files_to_remove->values[i];
 		IF_DEBUG("deleting file %lld\n", serial);
@@ -819,7 +819,7 @@ File* Depot::file_star_eded_by(File* file, sqlite3_stmt* stmt) {
 				if (blobsize > 0) {
 					digest = new Digest();
 					digest->m_size = blobsize;
-					memcpy(digest->m_data, blob, (blobsize < sizeof(digest->m_data)) ? blobsize : sizeof(digest->m_data));
+					memcpy(digest->m_data, blob, ((size_t)blobsize < sizeof(digest->m_data)) ? blobsize : sizeof(digest->m_data));
 				}
 
 				Archive* archive = this->archive(archive_serial);
