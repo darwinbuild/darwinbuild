@@ -423,9 +423,19 @@ int Depot::backup_file(File* file, void* ctx) {
 
 		// XXX: res = file->backup()
 
-		// Copy libSystem since it cannot be renamed safely
-		const char* libsystem = "/usr/lib/libSystem.B.dylib";
-		if (strncmp(libsystem, file->path(), strlen(libsystem)) == 0) {
+		// Copy libraries gnutar uses since we need to use gnutar before they are replaced		
+		int i = 0;
+		bool docopy = false;
+		const char* tarlibs[] = {"/usr/lib/libSystem.B.dylib",
+					 "/usr/lib/libiconv.2.dylib",
+					 "/usr/lib/libgcc_s.1.dylib"};
+		for (i = 0; i < 3; i++) {
+		  if (strncmp(tarlibs[i], file->path(), strlen(tarlibs[i])) == 0) {
+		    docopy = true;
+		    break;
+		  }
+		}
+		if (docopy) {
 		  IF_DEBUG("[backup] copyfile(%s, %s)\n", file->path(), dstpath);
 		  res = copyfile(file->path(), dstpath, NULL, COPYFILE_ALL);
 		} else {
