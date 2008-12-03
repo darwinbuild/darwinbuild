@@ -28,6 +28,7 @@
 #include "Utils.h"
 
 #include <assert.h>
+#include <copyfile.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <libgen.h>
@@ -421,8 +422,17 @@ int Depot::backup_file(File* file, void* ctx) {
 		++context->files_modified;
 
 		// XXX: res = file->backup()
-		IF_DEBUG("[backup] rename(%s, %s)\n", file->path(), dstpath);
-		res = rename(file->path(), dstpath);
+
+		// Copy libSystem since it cannot be renamed safely
+		const char* libsystem = "/usr/lib/libSystem.B.dylib";
+		if (strncmp(libsystem, file->path(), strlen(libsystem)) == 0) {
+		  IF_DEBUG("[backup] copyfile(%s, %s)\n", file->path(), dstpath);
+		  res = copyfile(file->path(), dstpath, NULL, COPYFILE_ALL);
+		} else {
+		  IF_DEBUG("[backup] rename(%s, %s)\n", file->path(), dstpath);
+		  res = rename(file->path(), dstpath);
+		}
+
 		if (res != 0) fprintf(stderr, "%s:%d: backup failed: %s: %s (%d)\n", __FILE__, __LINE__, dstpath, strerror(errno), errno);
 		free(dstpath);
 	}
