@@ -456,8 +456,8 @@ if [ "$nosource" != "YES" ]; then
 
 	# prepare for the opensource.apple.com/tarballs case as it's no more redirected
 	if "$($DARWINXREF source_sites $projnam)" | grep -q "opensource.apple.com/tarballs" ; then
-		filenamereal=$(echo $(basename "$filename" .tar.gz) | sed -e 's,-[0-9.]*$,,')/"$filename"
-		Download "$SourceCache" "$filenamereal" "$($DARWINXREF source_sites $projnam)"
+		targetfilename=$(echo $(basename "$filename" .tar.gz) | sed -e 's,-[0-9.]*$,,') 
+		Download "$SourceCache" "$filename" "$($DARWINXREF source_sites $projnam)/$targetfilename"
 	else
 		Download "$SourceCache" "$filename" "$($DARWINXREF source_sites $projnam)"
 	fi
