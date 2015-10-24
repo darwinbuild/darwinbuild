@@ -92,7 +92,7 @@ CFPropertyListRef read_plist(char* path) {
 										result = CFPropertyListCreateWithData(NULL, data, kCFPropertyListMutableContainers, 0, &str);
                                         CFRelease(data);
                                         if (result == NULL) {
-											CFString errorDesc = CFErrorCopyDescription(str);
+											CFStringRef errorDesc = CFErrorCopyDescription(str);
 											perror_cfstr(errorDesc);
 											CFRelease(errorDesc);
 										}
@@ -105,7 +105,7 @@ CFPropertyListRef read_plist(char* path) {
                                         }
 #endif
 										if (str) {
-											    CFRelase(str);
+											    CFRelease(str);
 										}	
                                 }
                                 munmap(buffer, size);
